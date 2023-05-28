@@ -18,7 +18,7 @@ function App() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [shortestTime, setShortestTime] = useState(Number.MAX_SAFE_INTEGER);
 
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const clickSoundAudio = useRef(null);
 
   useEffect(() => {
@@ -171,7 +171,6 @@ function App() {
           A click-based reaction game, inspired by ones used by professional athletes to test reflexes.
           <br></br><br></br>
           <strong>How to play? </strong>
-          <br></br>
           Click as many green buttons as possible before the grid fills up. The game will speed up so be quick. Pressing the wrong square gets minus points!
         </a>
       </header>
@@ -182,7 +181,7 @@ function App() {
             <span>Current Score: {score}</span>
             <span>Highest Score: {highestScore}</span> 
           </div>
-          {gameOver && <div className="gameOver">Game Over!</div>}
+          {gameOver && <div className="gameOver">GAME OVER!</div>}
           <div>
             <div onClick={() => setIsSoundEnabled(prevState => !prevState)}>
               {isSoundEnabled ? (
@@ -202,7 +201,7 @@ function App() {
           <span><div>Shortest time: {shortestTime === Number.MAX_SAFE_INTEGER ? 'N/A' : formatTime(shortestTime)}</div></span>
         </div>
       </body>
-      {gameOver && <div className="gameOverMobile">Game Over!</div>}
+      {gameOver && <div className="gameOverMobile">GAME OVER!</div>}
     </div>
   );
 }

@@ -63,9 +63,11 @@
 
 
 .gameOver{
-  font-size: 40px;
-  color: red;
+  font-size: 30px;
+  color: white;
   font-weight: 500;
+  background-color: red;
+  padding:5px 10px;
 }
 
 .scorePanel span{
@@ -133,12 +135,16 @@
     display: none;
   }
   .gameOverMobile{
-    display: block;
+    display: flex;
     font-size: 50px;
-    color: red;
+    color: white;
     font-weight: 500;
-    margin-top:-300px;
-    -webkit-text-stroke: 1px gray;
+    margin-top:-340px;
+    background-color: red;
+    margin-right: 25%;
+    margin-left: 25%;
+    padding:15px;
+    justify-content: center;
   }
   .App-header {
     font-size: calc(6px + 2vmin);
