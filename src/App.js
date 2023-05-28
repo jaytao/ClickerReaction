@@ -157,11 +157,10 @@ function App() {
   
 
   const formatTime = (time) => {
-    const milliseconds = Math.floor((time % 1000) / 10);
-    const seconds = Math.floor((time / 1000) % 60);
-    const minutes = Math.floor((time / (1000 * 60)) % 60);
+    const milliseconds = Math.floor(time % 1000);
+    const seconds = Math.floor(time / 1000);
   
-    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}.${milliseconds < 10 ? '0' + milliseconds : milliseconds}`;
+    return `${seconds}.${milliseconds < 10 ? '00' + milliseconds : milliseconds < 100 ? '0' + milliseconds : milliseconds}`;
   };
 
   return (
