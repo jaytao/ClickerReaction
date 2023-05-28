@@ -171,7 +171,7 @@ function App() {
           A click-based reaction game, inspired by ones used by professional athletes to test reflexes.
           <br></br><br></br>
           <strong>How to play? </strong>
-          Click as many green buttons as possible before the grid fills up. The game will speed up so be quick. Pressing the wrong square gets minus points!
+          Click green buttons before the grid fills up. Avoid wrong squares for minus points. The game will speed up so be quick. 
         </a>
       </header>
       <br></br>

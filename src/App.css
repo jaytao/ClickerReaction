@@ -18,6 +18,7 @@
 
 .textDiv{
   width:700px;
+  max-width: 100%;
 }
 
 * {
