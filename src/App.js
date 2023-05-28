@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import boxes from "./boxes";
 import Box from "./Box"
 
@@ -16,6 +16,11 @@ function App() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [shortestTime, setShortestTime] = useState(Number.MAX_SAFE_INTEGER);
 
+  const clickSoundAudio = useRef(null);
+
+  useEffect(() => {
+    clickSoundAudio.current = new Audio(clickSound);
+  }, []);
 
   function toggle(id) {
     setSquares(prevSquares => {
@@ -94,8 +99,9 @@ function App() {
   }
 
   function handleButtonClick(id, isOn) {
-    const audio = new Audio(clickSound);
-    audio.play();
+    let audioClone = clickSoundAudio.current.cloneNode(); // Allow multiple sounds to play at once
+    audioClone.play();
+
     toggle(id);
     if (isOn) {
       const newScore = score + 1;
