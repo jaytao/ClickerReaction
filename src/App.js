@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import boxes from "./boxes";
 import Box from "./Box"
 
+import clickSound from './sounds/boop.wav';
+
 function App() {
 
   const [squares, setSquares] = useState(boxes)
@@ -32,7 +34,7 @@ function App() {
         }
         return newSquares
     })
-}
+  }
 
 
   const squareElements = squares.map(square => (
@@ -92,6 +94,8 @@ function App() {
   }
 
   function handleButtonClick(id, isOn) {
+    const audio = new Audio(clickSound);
+    audio.play();
     toggle(id);
     if (isOn) {
       const newScore = score + 1;
