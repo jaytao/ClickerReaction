@@ -181,7 +181,7 @@ function App() {
             <span>Current Score: {score}</span>
             <span>Highest Score: {highestScore}</span> 
           </div>
-          {gameOver && <div className="gameOver">GAME OVER!</div>}
+          {gameOver && <div className="gameOver">GAME OVER</div>}
           <div>
             <div onClick={() => setIsSoundEnabled(prevState => !prevState)}>
               {isSoundEnabled ? (
@@ -201,7 +201,7 @@ function App() {
           <span><div>Shortest time: {shortestTime === Number.MAX_SAFE_INTEGER ? 'N/A' : formatTime(shortestTime)}</div></span>
         </div>
       </body>
-      {gameOver && <div className="gameOverMobile">GAME OVER!</div>}
+      {gameOver && <div className="gameOverMobile">GAME OVER</div>}
     </div>
   );
 }
