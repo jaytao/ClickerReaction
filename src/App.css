@@ -49,7 +49,7 @@
   margin-right: auto;
   width:100%;
   justify-content: space-between;
-  margin: 5px 60px;
+  margin: 5px 65px;
   font-size: 12px;
   align-items: center;
 }
@@ -68,9 +68,14 @@
   font-weight: 500;
 }
 
+.scorePanel span{
+  padding-top:3px;
+}
+
 .scorePanel{
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .gameOverMobile{
@@ -83,7 +88,7 @@
   justify-content: space-between;
   margin-right:auto;
   width:100%;
-  margin: 0px 62px;
+  margin: 0px 65px;
 }
 
 @media only screen and (max-width: 600px) {

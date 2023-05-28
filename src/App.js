@@ -180,7 +180,7 @@ function App() {
         <div className="gamePanel">
           <div className="scorePanel">
             <span>Current Score: {score}</span>
-            <span>Personal Record: {highestScore}</span> 
+            <span>Highest Score: {highestScore}</span> 
           </div>
           {gameOver && <div className="gameOver">Game Over!</div>}
           <div>
