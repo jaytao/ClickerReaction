@@ -2,6 +2,8 @@ import './App.css';
 import React, { useState, useEffect, useRef } from "react";
 import boxes from "./boxes";
 import Box from "./Box"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVolumeUp, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
 
 import clickSound from './sounds/boop.wav';
 
@@ -16,6 +18,7 @@ function App() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [shortestTime, setShortestTime] = useState(Number.MAX_SAFE_INTEGER);
 
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const clickSoundAudio = useRef(null);
 
   useEffect(() => {
@@ -99,8 +102,10 @@ function App() {
   }
 
   function handleButtonClick(id, isOn) {
-    let audioClone = clickSoundAudio.current.cloneNode(); // Allow multiple sounds to play at once
-    audioClone.play();
+    if (isSoundEnabled) {
+      let audioClone = clickSoundAudio.current.cloneNode(); // Allow multiple sounds to play at once
+      audioClone.play();
+    }
 
     toggle(id);
     if (isOn) {
@@ -178,6 +183,15 @@ function App() {
             <span>Personal Record: {highestScore}</span> 
           </div>
           {gameOver && <div className="gameOver">Game Over!</div>}
+          <div>
+            <div onClick={() => setIsSoundEnabled(prevState => !prevState)}>
+              {isSoundEnabled ? (
+                <FontAwesomeIcon icon={faVolumeUp} />
+              ) : (
+                <FontAwesomeIcon icon={faVolumeMute} />
+              )}
+            </div>
+          </div>
           <button onClick={startEvents} className="startButton">Click to Start</button>
         </div>
         
