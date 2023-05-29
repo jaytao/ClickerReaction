@@ -8,48 +8,36 @@ import { faVolumeUp, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
 import clickSound from "./sounds/boop.wav";
 
 function App() {
+  const timeLimit = 15 * 1000;
   const [squares, setSquares] = useState(boxes);
   const [score, setScore] = useState(0);
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [speedMultiplier, setSpeedMultiplier] = useState(1);
   const [gameOver, setGameOver] = useState(false);
   const [highestScore, setHighestScore] = useState(0);
-  const [timeElapsed, setTimeElapsed] = useState(0);
   const [shortestTime, setShortestTime] = useState(Number.MAX_SAFE_INTEGER);
+  const [timeElapsed, setTimeElapsed] = useState(0);
 
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
   const clickSoundAudio = useRef(null);
+
+  let timerInterval = null;
+  let runnerInterval = null;
+  let endTimerTimeout = null;
+  let speedMultiplier = 10;
+  let intervalCounter = 0;
+  let intervalThreshold = 0;
+
+  let startTime = null;
 
   useEffect(() => {
     clickSoundAudio.current = new Audio(clickSound);
   }, []);
 
-  function getUntoggledIndexes(squares) {
-    return squares.filter((obj) => !obj.on);
-  }
-
   function toggle(id) {
-    setSquares((prevSquares) => {
-      const newSquares = [];
-      for (let i = 0; i < prevSquares.length; i++) {
-        const currentSquare = prevSquares[i];
-        if (currentSquare.id === id) {
-          const updatedSquare = {
-            ...currentSquare,
-            on: !currentSquare.on,
-          };
-          newSquares.push(updatedSquare);
-        } else {
-          newSquares.push(currentSquare);
-        }
-      }
-      return newSquares;
-    });
+    squares[id].on = !squares[id].on;
   }
-
   const squareElements = squares.map((square) => (
     <Box
-      key={square.id}
       id={square.id}
       on={square.on}
       toggle={() => handleButtonClick(square.id, square.on)}
@@ -57,106 +45,82 @@ function App() {
   ));
 
   function startEvents() {
-    clearSquares();
+    squares.forEach((box) => {
+      box.on = false;
+    });
     setTimeElapsed(0); // Reset timer
-    startGame();
-    setGameOver(false); // Reset game over state
-  }
-
-  function startGame() {
     setIsGameStarted(true);
+    setGameOver(false); // Reset game over state
+    setScore(0); // Reset score counter
+    runnerInterval = setInterval(runInterval, 100);
+    timerInterval = setInterval(timeInterval, 1);
+    endTimerTimeout = setTimeout(() => {
+      // sometimes it doesn't end exactly at timeLimit, off by like 2-3 ms
+      setTimeElapsed(timeLimit);
+      endGame();
+    }, timeLimit);
+    console.log(`run ${runnerInterval} time ${timerInterval}`);
+    intervalCounter = 0;
+    intervalThreshold = intervalCounter + speedMultiplier;
+    startTime = Date.now();
   }
 
-  useEffect(() => {
-    let timer;
-    if (isGameStarted) {
-      timer = setInterval(() => {
-        setSquares((prevSquares) => {
-          const unToggled = prevSquares.filter((obj) => !obj.on);
-          const randomIndex =
-            unToggled[Math.floor(Math.random() * unToggled.length)].id;
-          const updatedSquares = prevSquares.map((square, index) => ({
-            ...square,
-            on: index === randomIndex ? true : square.on,
-          }));
-          // Check if all squares are on
-          if (updatedSquares.every((square) => square.on)) {
-            setGameOver(true);
-            clearInterval(timer);
-          }
-          return updatedSquares;
-        });
-      }, 1000 / speedMultiplier);
+  function endGame() {
+    setGameOver(true);
+    console.log(`stop: run ${runnerInterval} time ${timerInterval}`);
+    clearInterval(runnerInterval);
+    clearInterval(timerInterval);
+    clearTimeout(endTimerTimeout);
+    if (timeElapsed < shortestTime && score >= 50) {
+      setShortestTime(timeElapsed);
+    }
+    console.log(`${highestScore} ${score}`);
+    setHighestScore((currHighest) => Math.max(currHighest, score));
+  }
+
+  function runInterval() {
+    if (intervalCounter === intervalThreshold) {
+      const unToggled = squares.filter((obj) => !obj.on);
+      const randomIndex =
+        unToggled[Math.floor(Math.random() * unToggled.length)].id;
+      toggle(randomIndex);
+
+      // checking for all squares being toggled
+      if (squares.every((square) => square.on)) {
+        endGame();
+      }
+
+      // adjusting speed
+      if (speedMultiplier >= 4 && score % 5 === 0) {
+        speedMultiplier -= 1;
+      }
+
+      intervalThreshold = intervalCounter + speedMultiplier;
     }
 
-    return () => {
-      clearInterval(timer);
-    };
-  }, [isGameStarted, speedMultiplier]);
+    intervalCounter += 1;
+  }
 
-  function clearSquares() {
-    const clearedSquares = squares.map((square) => ({
-      ...square,
-      on: false,
-    }));
-    setSquares(clearedSquares);
-    setScore(0); // Reset score counter
-    setSpeedMultiplier(1); // Reset speed multiplier
+  function timeInterval() {
+    setTimeElapsed(Date.now() - startTime);
   }
 
   function handleButtonClick(id, isOn) {
-    if (isSoundEnabled) {
-      let audioClone = clickSoundAudio.current.cloneNode(); // Allow multiple sounds to play at once
-      audioClone.play();
-    }
-
-    toggle(id);
-    if (isOn) {
-      const newScore = score + 1;
-      setScore(newScore);
-      if (newScore > highestScore) {
-        setHighestScore(newScore);
-      }
-      if (newScore > 50 && newScore % 6 === 0) {
-        setSpeedMultiplier((prevMultiplier) => prevMultiplier * 1.04);
-      }
-      if (newScore <= 50 && newScore > 20 && newScore % 3 === 0) {
-        setSpeedMultiplier((prevMultiplier) => prevMultiplier * 1.08);
-      }
-      if (newScore <= 20 && newScore % 3 === 0) {
-        setSpeedMultiplier((prevMultiplier) => prevMultiplier * 1.15);
-      }
-    } else {
-      // Ensure score never falls below 0
-      if (score > 4) {
-        setScore((prevScore) => prevScore - 5);
-      } else {
-        setScore(0);
+    if (isOn && !gameOver) {
+      toggle(id);
+      setScore((score) => score + 1);
+      if (isSoundEnabled) {
+        let audioClone = clickSoundAudio.current.cloneNode(); // Allow multiple sounds to play at once
+        audioClone.play();
       }
     }
   }
 
   useEffect(() => {
-    let interval;
-
-    if (isGameStarted) {
-      const startTime = Date.now() - timeElapsed;
-      interval = setInterval(() => {
-        setTimeElapsed(Date.now() - startTime);
-      }, 1);
+    if (score === 50) {
+      endGame();
     }
-
-    if (score >= 50 || gameOver) {
-      clearInterval(interval);
-      if (timeElapsed < shortestTime && score >= 50) {
-        setShortestTime(timeElapsed);
-      }
-    }
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isGameStarted, score, gameOver, timeElapsed, shortestTime]);
+  }, [score]);
 
   const formatTime = (time) => {
     const milliseconds = Math.floor(time % 1000);
