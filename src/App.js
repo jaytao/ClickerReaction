@@ -24,6 +24,10 @@ function App() {
     clickSoundAudio.current = new Audio(clickSound);
   }, []);
 
+  function getUntoggledIndexes(squares) {
+    return squares.filter((obj) => !obj.on);
+  }
+
   function toggle(id) {
     setSquares((prevSquares) => {
       const newSquares = [];
@@ -68,7 +72,9 @@ function App() {
     if (isGameStarted) {
       timer = setInterval(() => {
         setSquares((prevSquares) => {
-          const randomIndex = Math.floor(Math.random() * prevSquares.length);
+          const unToggled = prevSquares.filter((obj) => !obj.on);
+          const randomIndex =
+            unToggled[Math.floor(Math.random() * unToggled.length)].id;
           const updatedSquares = prevSquares.map((square, index) => ({
             ...square,
             on: index === randomIndex ? true : square.on,
@@ -142,7 +148,7 @@ function App() {
 
     if (score >= 50 || gameOver) {
       clearInterval(interval);
-      if (timeElapsed < shortestTime) {
+      if (timeElapsed < shortestTime && score >= 50) {
         setShortestTime(timeElapsed);
       }
     }
